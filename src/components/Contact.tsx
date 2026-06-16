@@ -2,38 +2,31 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, Github, Linkedin, Instagram } from 'lucide-react';
 import { contactData } from '../data/static';
-import emailjs from '@emailjs/browser';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    whatsapp: '',
     message: '',
   });
 
   const [status, setStatus] = useState<'idle' | 'success' | 'error' | 'loading'>('idle');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
-    try {
-      await emailjs.send(
-        'service_lr94iri',
-        'template_jvtyflo',
-        {
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        },
-        '_VYgtZtvayBRK3ex1'
-      );
-      setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
-      setTimeout(() => setStatus('idle'), 3000);
-    } catch (error) {
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 3000);
-    }
+
+    const whatsappMessage = `Name: ${formData.name}
+Email: ${formData.email}
+WhatsApp: ${formData.whatsapp}
+Message: ${formData.message}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=919154175727&text=${encodeURIComponent(whatsappMessage)}`;
+
+    window.location.href = whatsappUrl;
+    setStatus('success');
+    setFormData({ name: '', email: '', whatsapp: '', message: '' });
+    setTimeout(() => setStatus('idle'), 3000);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -193,6 +186,23 @@ const Contact: React.FC = () => {
                   required
                   className="w-full px-4 py-3 bg-slate-600/50 border border-slate-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
                   placeholder={contactData.form.emailPlaceholder}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-300 mb-2">
+                  Your WhatsApp Number
+                </label>
+                <motion.input
+                  whileFocus={{ scale: 1.02 }}
+                  type="tel"
+                  id="whatsapp"
+                  name="whatsapp"
+                  value={formData.whatsapp}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 bg-slate-600/50 border border-slate-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
+                  placeholder="Enter your WhatsApp number"
                 />
               </div>
 
